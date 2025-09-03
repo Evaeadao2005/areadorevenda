@@ -1,22 +1,17 @@
-// Arquivo: netlify/functions/auth.js
+// Arquivo: netlify/functions/auth.js (versão com logs aprimorados)
 
 // A URL de login real do seu painel.
 const PANEL_LOGIN_URL = 'https://daltvplus.sigmab.pro/api/v1/user/login';
 
 exports.handler = async function(event) {
-    // Cabeçalhos essenciais para permitir a comunicação (CORS)
     const headers = {
-        'Access-Control-Allow-Origin': '*', // Permite que seu site no Netlify acesse a função
+        'Access-Control-Allow-Origin': '*',
         'Access-Control-Allow-Headers': 'Content-Type',
         'Content-Type': 'application/json'
     };
     
-    // Responde a uma checagem prévia do navegador (preflight OPTIONS)
     if (event.httpMethod === 'OPTIONS') {
-        return {
-            statusCode: 204,
-            headers
-        };
+        return { statusCode: 204, headers };
     }
 
     if (event.httpMethod !== 'POST') {
@@ -26,6 +21,9 @@ exports.handler = async function(event) {
             body: JSON.stringify({ message: 'Método não permitido.' })
         };
     }
+
+    // LOG 1: Registra o início da execução
+    console.log("Recebida requisição de login.");
 
     try {
         const { username, password } = JSON.parse(event.body);
@@ -38,13 +36,14 @@ exports.handler = async function(event) {
             };
         }
 
-        // --- AUTENTICAÇÃO REAL CONTRA O SEU PAINEL ---
+        // LOG 2: Registra os dados que serão enviados (sem a senha, por segurança)
+        console.log(`Tentando autenticar usuário: ${username}`);
+
         const response = await fetch(PANEL_LOGIN_URL, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
                 'Accept': 'application/json',
-                // ADIÇÃO CRUCIAL: Faz a requisição se passar por um navegador comum
                 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.110 Safari/537.36'
             },
             body: JSON.stringify({
@@ -52,30 +51,31 @@ exports.handler = async function(event) {
                 password: password
             })
         });
+
+        // LOG 3: Registra o status da resposta do seu painel
+        console.log(`Painel respondeu com status: ${response.status}`);
         
-        // Lógica de tratamento de resposta mais robusta
         const responseText = await response.text();
         let data;
 
         try {
-            // Tenta interpretar a resposta como JSON
             data = JSON.parse(responseText);
         } catch (jsonError) {
-            // Se não for JSON (ex: uma página de erro HTML), o erro é capturado aqui
-            console.error("A resposta do painel não foi um JSON válido. Resposta recebida:", responseText);
-            // Retorna o erro genérico para o usuário
-            throw new Error("O painel retornou uma resposta inválida.");
+            // LOG 4: Se a resposta não for JSON, este log é crucial!
+            console.error("ERRO: A resposta do painel não é um JSON válido. Resposta recebida:", responseText);
+            // Lança um erro para ser pego pelo catch principal.
+            throw new Error("O painel retornou uma resposta em formato inesperado (não-JSON).");
         }
         
         if (response.ok) {
-            // Sucesso
+            console.log("Autenticação bem-sucedida para o usuário:", username);
             return {
                 statusCode: 200,
                 headers,
                 body: JSON.stringify({ success: true, token: data.token })
             };
         } else {
-            // Erro de login (ex: 401 Unauthorized)
+            console.warn(`Falha na autenticação para usuário ${username}. Mensagem do painel: ${data.message}`);
             return {
                 statusCode: response.status,
                 headers,
@@ -84,8 +84,8 @@ exports.handler = async function(event) {
         }
 
     } catch (error) {
-        // Captura qualquer erro na comunicação ou na lógica acima
-        console.error("Erro detalhado na função de autenticação:", error.message);
+        // LOG 5: O log mais importante. Captura o erro completo.
+        console.error("ERRO CRÍTICO NA FUNÇÃO DE AUTENTICAÇÃO:", error);
         return {
             statusCode: 500,
             headers,
