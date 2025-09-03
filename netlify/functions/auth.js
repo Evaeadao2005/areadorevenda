@@ -4,13 +4,14 @@
 const PANEL_LOGIN_URL = 'https://daltvplus.sigmab.pro/api/v1/user/login';
 
 exports.handler = async function(event, context) {
+    // Cabeçalhos para permitir a comunicação (CORS)
     const headers = {
         'Access-Control-Allow-Origin': '*', // Permite acesso de qualquer origem
         'Access-Control-Allow-Headers': 'Content-Type',
         'Content-Type': 'application/json'
     };
     
-    // Responde a uma checagem prévia do navegador (preflight)
+    // Responde a uma checagem prévia do navegador (preflight OPTIONS)
     if (event.httpMethod === 'OPTIONS') {
         return {
             statusCode: 204,
@@ -18,10 +19,9 @@ exports.handler = async function(event, context) {
         };
     }
 
-    // Apenas responde a requisições POST
     if (event.httpMethod !== 'POST') {
         return {
-            statusCode: 405,
+            statusCode: 405, // Method Not Allowed
             headers,
             body: JSON.stringify({ message: 'Método não permitido' })
         };
@@ -32,13 +32,13 @@ exports.handler = async function(event, context) {
 
         if (!username || !password) {
             return {
-                statusCode: 400,
+                statusCode: 400, // Bad Request
                 headers,
                 body: JSON.stringify({ message: 'Usuário e senha são obrigatórios.' })
             };
         }
 
-        // Faz a chamada de login para o painel real
+        // --- AUTENTICAÇÃO REAL CONTRA O PAINEL ---
         const response = await fetch(PANEL_LOGIN_URL, {
             method: 'POST',
             headers: {
@@ -51,6 +51,7 @@ exports.handler = async function(event, context) {
             })
         });
 
+        // Tenta ler a resposta do painel como JSON
         const data = await response.json();
 
         // Se a resposta do painel for bem-sucedida (status 200-299)
@@ -58,22 +59,25 @@ exports.handler = async function(event, context) {
             return {
                 statusCode: 200,
                 headers,
-                body: JSON.stringify({ success: true, message: 'Login bem-sucedido!' })
+                // Retorna sucesso e o token recebido do painel
+                body: JSON.stringify({ success: true, token: data.token })
             };
         } else {
             // Se a resposta do painel indicar erro (ex: 401, 422)
+            // Retorna o status de erro e a mensagem de erro que o painel enviou
             return {
                 statusCode: response.status,
                 headers,
-                body: JSON.stringify({ message: data.message || 'Usuário ou senha inválidos.' })
+                body: JSON.stringify({ message: data.message || 'Credenciais inválidas.' })
             };
         }
 
     } catch (error) {
+        console.error("Erro na função de autenticação:", error);
         return {
-            statusCode: 500,
+            statusCode: 500, // Internal Server Error
             headers,
-            body: JSON.stringify({ message: 'Erro interno ao tentar autenticar.' })
+            body: JSON.stringify({ message: 'Ocorreu um erro inesperado no servidor.' })
         };
     }
 };
