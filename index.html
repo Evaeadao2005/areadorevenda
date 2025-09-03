@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Editor Avançado - Mundo TV</title>
+    <title>Editor Mundo TV - Login de Revendedor</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
@@ -16,367 +16,234 @@
             --editor-input-bg: #40444b;
             --editor-accent: #7289da;
             --editor-success: #43b581;
+            --editor-error: #f04747;
         }
         * { box-sizing: border-box; }
         body {
             font-family: 'Inter', sans-serif;
             margin: 0;
-            display: flex;
             height: 100vh;
             overflow: hidden;
             background-color: var(--editor-bg);
             color: var(--editor-text);
         }
-        #controls {
-            width: 400px;
-            background-color: var(--editor-panel);
-            height: 100%;
-            overflow-y: auto;
-            display: flex;
-            flex-direction: column;
-            padding: 10px;
-        }
-        #preview {
-            flex-grow: 1;
-            height: 100%;
-            background-color: #fff;
-        }
-        #preview-frame {
-            width: 100%;
-            height: 100%;
-            border: none;
-        }
-        details {
-            border-bottom: 1px solid var(--editor-input-bg);
-            margin-bottom: 15px;
-        }
-        summary {
-            font-size: 1rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            color: var(--editor-header);
-            padding: 15px;
-            cursor: pointer;
-            list-style: none;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
+        #login-container { display: flex; align-items: center; justify-content: center; width: 100%; height: 100%; flex-direction: column; padding: 20px; }
+        .login-box { background-color: var(--editor-panel); padding: 40px; border-radius: 8px; width: 100%; max-width: 450px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
+        .login-box img { max-width: 120px; margin-bottom: 20px; }
+        .login-box h2 { margin-top: 0; margin-bottom: 10px; }
+        .login-box p { color: var(--editor-header); margin-bottom: 30px; }
+        .login-input { width: 100%; background-color: var(--editor-input-bg); border: 1px solid transparent; border-radius: 5px; padding: 15px; color: var(--editor-text); font-size: 1rem; margin-bottom: 20px; }
+        .login-button { width: 100%; background-color: var(--editor-accent); color: white; border: none; padding: 15px; border-radius: 5px; font-size: 1.1rem; font-weight: 700; cursor: pointer; transition: background-color 0.2s; }
+        .login-button:hover { background-color: #677bc4; }
+        .login-button:disabled { background-color: #505d8f; cursor: wait; }
+        #error-message { color: var(--editor-error); margin-top: 15px; font-weight: 500; height: 20px; }
+        #editor-container { display: none; width: 100%; height: 100%; flex-direction: row; }
+        #controls { width: 400px; background-color: var(--editor-panel); height: 100%; overflow-y: auto; display: flex; flex-direction: column; padding: 10px; flex-shrink: 0; }
+        #preview { flex-grow: 1; height: 100%; background-color: #fff; }
+        #preview-frame { width: 100%; height: 100%; border: none; }
+        details { border-bottom: 1px solid var(--editor-input-bg); margin-bottom: 15px; }
+        summary { font-size: 1rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--editor-header); padding: 15px; cursor: pointer; list-style: none; display: flex; align-items: center; gap: 10px; }
         summary::-webkit-details-marker { display: none; }
         details[open] summary { color: var(--editor-accent); }
         .details-content { padding: 0 15px 15px 15px; }
-
-        .control-item {
-            display: flex;
-            flex-direction: column;
-            margin-bottom: 15px;
-        }
-        .control-item label {
-            font-size: 0.9rem;
-            margin-bottom: 5px;
-            font-weight: 500;
-        }
-        .control-item input[type="text"],
-        .control-item input[type="number"],
-        .control-item textarea {
-            background-color: var(--editor-input-bg);
-            border: 1px solid transparent;
-            border-radius: 5px;
-            padding: 10px;
-            color: var(--editor-text);
-            font-family: 'Inter', sans-serif;
-            font-size: 0.9rem;
-            width: 100%;
-            transition: border-color 0.2s;
-        }
-        .control-item input[type="text"]:focus,
-        .control-item input[type="number"]:focus,
-        .control-item textarea:focus {
-            outline: none;
-            border-color: var(--editor-accent);
-        }
-        .control-item input[type="color"] {
-            width: 100%;
-            height: 40px;
-            border: none;
-            padding: 0;
-            cursor: pointer;
-            background-color: transparent;
-        }
-        .control-group-title {
-            font-weight: 700;
-            color: var(--editor-header);
-            margin-top: 20px;
-            margin-bottom: 10px;
-            border-bottom: 1px solid var(--editor-input-bg);
-            padding-bottom: 5px;
-        }
-
-        #export-button {
-            background-color: var(--editor-success);
-            color: white;
-            border: none;
-            padding: 15px;
-            border-radius: 5px;
-            font-size: 1.1rem;
-            font-weight: 700;
-            cursor: pointer;
-            margin: 20px;
-            transition: background-color 0.2s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-        }
+        .control-item { display: flex; flex-direction: column; margin-bottom: 15px; }
+        .control-item label { font-size: 0.9rem; margin-bottom: 5px; font-weight: 500; }
+        .control-item input[type="text"], .control-item input[type="number"], .control-item textarea { background-color: var(--editor-input-bg); border: 1px solid transparent; border-radius: 5px; padding: 10px; color: var(--editor-text); font-family: 'Inter', sans-serif; font-size: 0.9rem; width: 100%; transition: border-color 0.2s; }
+        .control-item input[type="text"]:focus, .control-item input[type="number"]:focus, .control-item textarea:focus { outline: none; border-color: var(--editor-accent); }
+        .control-item input[type="color"] { width: 100%; height: 40px; border: none; padding: 0; cursor: pointer; background-color: transparent; }
+        .control-group-title { font-weight: 700; color: var(--editor-header); margin-top: 20px; margin-bottom: 10px; border-bottom: 1px solid var(--editor-input-bg); padding-bottom: 5px; }
+        #export-button { background-color: var(--editor-success); color: white; border: none; padding: 15px; border-radius: 5px; font-size: 1.1rem; font-weight: 700; cursor: pointer; margin: 20px; transition: background-color 0.2s; display: flex; align-items: center; justify-content: center; gap: 10px; }
         #export-button:hover { background-color: #3aa072; }
     </style>
 </head>
 <body>
 
-    <aside id="controls">
-        <div style="padding: 15px">
-            <h2 style="margin: 0 0 5px 0;">Editor Completo</h2>
-            <p style="margin: 0; color: var(--editor-header); font-size: 0.9rem;">Clique nas seções para expandir e editar o conteúdo.</p>
+    <div id="login-container">
+        <div class="login-box">
+            <img src="https://daltv.site/logo.png" alt="Logo">
+            <h2>Acesso de Revendedor</h2>
+            <p>Use o usuário e senha do seu painel.</p>
+            <form id="login-form">
+                <input type="text" id="username-input" class="login-input" placeholder="Usuário do painel" required>
+                <input type="password" id="password-input" class="login-input" placeholder="Senha do painel" required>
+                <button type="submit" id="login-button" class="login-button">Entrar</button>
+            </form>
+            <p id="error-message"></p>
         </div>
-        
-        <details open>
-            <summary>⚙️ Gerais e Cores</summary>
-            <div class="details-content">
-                <div class="control-item">
-                    <label for="whatsapp-number">Número de WhatsApp (só números)</label>
-                    <input type="text" id="whatsapp-number" data-target="whatsapp-links" value="5514920046287">
-                </div>
-                 <div class="control-item">
-                    <label for="logo-url">URL da Logo (opcional)</label>
-                    <input type="text" id="logo-url" data-target="logo-img" value="/logo.png">
-                </div>
-                <div class="control-item">
-                    <label for="color-primary">Cor Primária</label>
-                    <input type="color" id="color-primary" data-target="color" data-variable="--cor-primaria" value="#E91E63">
-                </div>
-                <div class="control-item">
-                    <label for="color-secondary">Cor Secundária</label>
-                    <input type="color" id="color-secondary" data-target="color" data-variable="--cor-secundaria" value="#9C27B0">
-                </div>
-            </div>
-        </details>
+    </div>
 
-        <details>
-            <summary>🎬 Seção Principal</summary>
-            <div class="details-content">
-                <div class="control-item">
-                    <label for="hero-title">Título</label>
-                    <textarea id="hero-title" data-target="hero-title" rows="3">O Universo do Entretenimento, Unificado.</textarea>
-                </div>
-                <div class="control-item">
-                    <label for="hero-subtitle">Subtítulo</label>
-                    <textarea id="hero-subtitle" data-target="hero-subtitle" rows="4">Canais ao vivo, filmes recém-lançados e as séries que você ama. Tudo em um só lugar, com qualidade 4K e a estabilidade que você merece. Chega de trocar de app!</textarea>
-                </div>
-                <div class="control-item">
-                    <label for="hero-cta">Texto do Botão</label>
-                    <input type="text" id="hero-cta" data-target="hero-cta" value="QUERO TESTAR AGORA">
-                </div>
+    <div id="editor-container">
+        <aside id="controls">
+            <div style="padding: 15px">
+                <h2 style="margin: 0 0 5px 0;">Editor Completo</h2>
+                <p style="margin: 0; color: var(--editor-header); font-size: 0.9rem;">Clique nas seções para expandir e editar o conteúdo.</p>
             </div>
-        </details>
-        
-        <details>
-            <summary>✨ Vantagens</summary>
-            <div class="details-content">
-                 <div class="control-item">
-                    <label for="features-title">Título da Seção</label>
-                    <input type="text" id="features-title" data-target="features-title" value="Todo o Conteúdo. <span>Uma Só Assinatura.</span>">
+            
+            <details open>
+                <summary>⚙️ Gerais e Cores</summary>
+                <div class="details-content">
+                    <div class="control-item">
+                        <label for="whatsapp-number">Seu Nº de WhatsApp (só números)</label>
+                        <input type="text" id="whatsapp-number" data-target="whatsapp-links" value="5514920046287">
+                    </div>
+                     <div class="control-item">
+                        <label for="logo-url">URL da sua Logo (opcional)</label>
+                        <input type="text" id="logo-url" data-target="logo-img" value="/logo.png">
+                    </div>
+                    <div class="control-item">
+                        <label for="color-primary">Cor Primária</label>
+                        <input type="color" id="color-primary" data-target="color" data-variable="--cor-primaria" value="#E91E63">
+                    </div>
                 </div>
-                <div class="control-item">
-                    <label for="features-subtitle">Subtítulo da Seção</label>
-                    <input type="text" id="features-subtitle" data-target="features-subtitle" value="Combinamos o melhor de todos os mundos para uma experiência de TV definitiva.">
+            </details>
+            
+            <details>
+                <summary>🎬 Seção Principal</summary>
+                <div class="details-content">
+                    <div class="control-item">
+                        <label for="hero-title">Título</label>
+                        <textarea id="hero-title" data-target="hero-title" rows="3">O Universo do Entretenimento, Unificado.</textarea>
+                    </div>
                 </div>
-                <div class="control-group-title">Card 1</div>
-                <div class="control-item"><label>Título</label><input type="text" id="feature1-title" data-target="feature1-title" value="TV ao Vivo"></div>
-                <div class="control-item"><label>Descrição</label><textarea id="feature1-desc" data-target="feature1-desc" rows="3">Acompanhe esportes, notícias e seus programas favoritos em tempo real, sem atrasos ou travamentos.</textarea></div>
-                <div class="control-group-title">Card 2</div>
-                <div class="control-item"><label>Título</label><input type="text" id="feature2-title" data-target="feature2-title" value="Filmes e Séries"></div>
-                <div class="control-item"><label>Descrição</label><textarea id="feature2-desc" data-target="feature2-desc" rows="3">Pronto para maratonar? Um catálogo gigantesco com os últimos lançamentos e clássicos inesquecíveis.</textarea></div>
-                <div class="control-group-title">Card 3</div>
-                <div class="control-item"><label>Título</label><input type="text" id="feature3-title" data-target="feature3-title" value="Multiplataforma"></div>
-                <div class="control-item"><label>Descrição</label><textarea id="feature3-desc" data-target="feature3-desc" rows="3">Assista na sua Smart TV, celular, tablet ou computador. Sua programação te acompanha em qualquer lugar.</textarea></div>
-            </div>
-        </details>
-        
-        <details>
-            <summary>🚀 Como Funciona</summary>
-            <div class="details-content">
-                <div class="control-item"><label for="steps-title">Título da Seção</label><input type="text" id="steps-title" data-target="steps-title" value="Seu Acesso em <span>3 Passos Simples</span>"></div>
-                <div class="control-item"><label for="steps-subtitle">Subtítulo da Seção</label><input type="text" id="steps-subtitle" data-target="steps-subtitle" value="Menos complicação, mais diversão. Veja como é fácil começar."></div>
-                <div class="control-group-title">Passo 1</div>
-                <div class="control-item"><label>Título</label><input type="text" id="step1-title" data-target="step1-title" value="Peça seu Teste"></div>
-                <div class="control-item"><label>Descrição</label><input type="text" id="step1-desc" data-target="step1-desc" value="Fale conosco no WhatsApp para receber um acesso gratuito e sem compromisso."></div>
-                <div class="control-group-title">Passo 2</div>
-                <div class="control-item"><label>Título</label><input type="text" id="step2-title" data-target="step2-title" value="Instale o App"></div>
-                <div class="control-item"><label>Descrição</label><input type="text" id="step2-desc" data-target="step2-desc" value="Nossa equipe te ajuda a instalar nosso aplicativo em qualquer um dos seus aparelhos."></div>
-                <div class="control-group-title">Passo 3</div>
-                <div class="control-item"><label>Título</label><input type="text" id="step3-title" data-target="step3-title" value="Dê o Play"></div>
-                <div class="control-item"><label>Descrição</label><input type="text" id="step3-desc" data-target="step3-desc" value="É só fazer o login, pegar a pipoca e começar a explorar seu novo universo de conteúdo."></div>
-            </div>
-        </details>
+            </details>
 
-        <details>
-            <summary>💰 Planos e Preços</summary>
-            <div class="details-content">
-                <div class="control-item"><label for="plans-title">Título da Seção</label><input type="text" id="plans-title" data-target="plans-title" value="Escolha seu <span>Plano Ideal</span>"></div>
-                <div class="control-item"><label for="plans-subtitle">Subtítulo da Seção</label><input type="text" id="plans-subtitle" data-target="plans-subtitle" value="Temos a opção perfeita para cada perfil de espectador. Qual é o seu?"></div>
-                
-                <div class="control-group-title">Plano 1 (Básico)</div>
-                <div class="control-item"><label>Nome</label><input type="text" id="plan1-name" data-target="plan1-name" value="Básico"></div>
-                <div class="control-item"><label>Preço (ex: R$29)</label><input type="text" id="plan1-price" data-target="plan1-price" value="R$29"></div>
-                <div class="control-item"><label>Vantagem 1</label><input type="text" id="plan1-feat1" data-target="plan1-feat1" value="1 Tela Simultânea"></div>
-                <div class="control-item"><label>Vantagem 2</label><input type="text" id="plan1-feat2" data-target="plan1-feat2" value="Qualidade Full HD"></div>
-                <div class="control-item"><label>Vantagem 3</label><input type="text" id="plan1-feat3" data-target="plan1-feat3" value="Suporte Padrão"></div>
-                <div class="control-item"><label>Botão</label><input type="text" id="plan1-cta" data-target="plan1-cta" value="Assinar Agora"></div>
-
-                <div class="control-group-title">Plano 2 (Padrão/Popular)</div>
-                <div class="control-item"><label>Badge</label><input type="text" id="plan2-badge" data-target="plan2-badge" value="Mais Popular"></div>
-                <div class="control-item"><label>Nome</label><input type="text" id="plan2-name" data-target="plan2-name" value="Padrão"></div>
-                <div class="control-item"><label>Preço</label><input type="text" id="plan2-price" data-target="plan2-price" value="R$39"></div>
-                <div class="control-item"><label>Vantagem 1</label><input type="text" id="plan2-feat1" data-target="plan2-feat1" value="<b>3 Telas Simultâneas</b>"></div>
-                <div class="control-item"><label>Vantagem 2</label><input type="text" id="plan2-feat2" data-target="plan2-feat2" value="<b>Qualidade 4K Ultra HD</b>"></div>
-                <div class="control-item"><label>Vantagem 3</label><input type="text" id="plan2-feat3" data-target="plan2-feat3" value="Suporte Prioritário"></div>
-                <div class="control-item"><label>Botão</label><input type="text" id="plan2-cta" data-target="plan2-cta" value="Escolher Padrão"></div>
-                
-                <div class="control-group-title">Plano 3 (Premium)</div>
-                <div class="control-item"><label>Nome</label><input type="text" id="plan3-name" data-target="plan3-name" value="Premium"></div>
-                <div class="control-item"><label>Preço</label><input type="text" id="plan3-price" data-target="plan3-price" value="R$49"></div>
-                <div class="control-item"><label>Vantagem 1</label><input type="text" id="plan3-feat1" data-target="plan3-feat1" value="5 Telas Simultâneas"></div>
-                <div class="control-item"><label>Vantagem 2</label><input type="text" id="plan3-feat2" data-target="plan3-feat2" value="Qualidade 4K Ultra HD"></div>
-                <div class="control-item"><label>Vantagem 3</label><input type="text" id="plan3-feat3" data-target="plan3-feat3" value="Suporte VIP Dedicado"></div>
-                <div class="control-item"><label>Botão</label><input type="text" id="plan3-cta" data-target="plan3-cta" value="Virar Premium"></div>
-            </div>
-        </details>
-        
-        <details>
-            <summary>❓ FAQ (Perguntas Frequentes)</summary>
-            <div class="details-content">
-                 <div class="control-group-title">Pergunta 1</div>
-                 <div class="control-item"><label>Pergunta</label><input type="text" id="faq1-q" data-target="faq1-q" value="O que exatamente é IPTV?"></div>
-                 <div class="control-item"><label>Resposta</label><textarea id="faq1-a" data-target="faq1-a" rows="4">IPTV (Internet Protocol Television) é uma tecnologia que transmite canais de TV e conteúdo de vídeo pela internet, em vez de antenas ou cabos tradicionais. Isso nos permite oferecer mais canais, qualidade superior e um vasto catálogo de filmes e séries sob demanda.</textarea></div>
-                 <div class="control-group-title">Pergunta 2</div>
-                 <div class="control-item"><label>Pergunta</label><input type="text" id="faq2-q" data-target="faq2-q" value="Preciso de uma internet muito rápida?"></div>
-                 <div class="control-item"><label>Resposta</label><textarea id="faq2-a" data-target="faq2-a" rows="3">Para uma experiência fluida em Full HD, recomendamos no mínimo 15Mbps. Para aproveitar a qualidade máxima em 4K, o ideal é 30Mbps ou mais. O mais importante é uma conexão estável.</textarea></div>
-                 <div class="control-group-title">Pergunta 3</div>
-                 <div class="control-item"><label>Pergunta</label><input type="text" id="faq3-q" data-target="faq3-q" value="Posso cancelar a qualquer momento?"></div>
-                 <div class="control-item"><label>Resposta</label><textarea id="faq3-a" data-target="faq3-a" rows="3">Sim! Nossos planos são mensais e sem fidelidade. Você tem total liberdade para cancelar quando quiser, sem multas ou complicações. Queremos que você fique pela qualidade, não por um contrato.</textarea></div>
-            </div>
-        </details>
-
-        <details>
-            <summary>🦶 Rodapé</summary>
-            <div class="details-content">
-                <div class="control-item">
-                    <label for="footer-text">Texto do Rodapé</label>
-                    <input type="text" id="footer-text" data-target="footer-text" value="© {{YEAR}} Mundo TV. Seu universo de entretenimento. Simples assim.">
-                </div>
-            </div>
-        </details>
-
-        <button id="export-button">
-            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
-            Exportar HTML
-        </button>
-    </aside>
-
-    <main id="preview">
-        <iframe id="preview-frame"></iframe>
-    </main>
+            <button id="export-button">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                Exportar HTML
+            </button>
+        </aside>
+        <main id="preview">
+            <iframe id="preview-frame"></iframe>
+        </main>
+    </div>
 
     <script>
-        // O template completo da LP é armazenado aqui
-        const landingPageTemplate = `<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Mundo TV | O Universo do Entretenimento, Unificado</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;900&family=Inter:wght@400;500;700;800&display=swap" rel="stylesheet"><style>:root{--cor-primaria:{{COLOR_PRIMARY}};--cor-secundaria:{{COLOR_SECONDARY}};--cor-terciaria:#00BCD4;--bg-principal:#121212;--bg-card:rgba(30,30,30,0.7);--borda-card:rgba(255,255,255,0.08);--texto-claro:#F0F0F0;--texto-escuro:#A0A0A0;--font-titulo:'Montserrat',sans-serif;--font-body:'Inter',sans-serif}*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}html{scroll-behavior:smooth}body{font-family:var(--font-body);background-color:var(--bg-principal);color:var(--texto-claro);line-height:1.6;overflow-x:hidden;background-image:radial-gradient(circle at top left,var(--cor-secundaria) 0%,transparent 25%),radial-gradient(circle at bottom right,var(--cor-primaria) 0%,transparent 25%);background-size:150% 150%;animation:gradient-anim 15s ease infinite;position:relative}@keyframes gradient-anim{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}.container{max-width:1200px;margin:0 auto;padding:0 20px}.reveal{opacity:0;transform:translateY(30px);transition:opacity .8s ease-out,transform .6s ease-out}.reveal.visible{opacity:1;transform:translateY(0)}.hero{min-height:90vh;display:flex;align-items:center;justify-content:center;text-align:center;position:relative;z-index:1}.hero-content{max-width:800px;padding:20px}.hero-content h1{font-family:var(--font-titulo);font-weight:900;font-size:clamp(3rem,9vw,5.5rem);line-height:1.1;margin-bottom:20px;background:linear-gradient(45deg,var(--cor-primaria),var(--cor-secundaria));-webkit-background-clip:text;-webkit-text-fill-color:transparent}.hero-content p{font-size:clamp(1rem,2.5vw,1.25rem);color:var(--texto-escuro);margin-bottom:40px;font-weight:500}.cta-button{display:inline-flex;align-items:center;gap:10px;background:linear-gradient(45deg,var(--cor-primaria),var(--cor-secundaria));color:#fff;padding:16px 32px;text-decoration:none;font-size:1.1rem;font-weight:700;border-radius:50px;box-shadow:0 5px 20px rgba(var(--cor-primaria-rgb),.4);transition:all .3s ease;position:relative;overflow:hidden;border:none;cursor:pointer}.cta-button:hover{transform:translateY(-5px);box-shadow:0 8px 25px rgba(var(--cor-primaria-rgb),.6)}section{padding:100px 0;position:relative;z-index:1}.section-header{text-align:center;margin-bottom:60px}.section-header h2{font-family:var(--font-titulo);font-weight:900;font-size:clamp(2.2rem,5vw,3.5rem);margin-bottom:15px}.section-header p{font-size:1.05rem;color:var(--texto-escuro);max-width:700px;margin:0 auto}.features-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:30px}.feature-card{background:var(--bg-card);border:1px solid var(--borda-card);border-radius:15px;padding:35px;backdrop-filter:blur(8px);transition:transform .3s ease,box-shadow .3s ease;text-align:center}.feature-card:hover{transform:translateY(-8px);box-shadow:0 15px 30px rgba(0,0,0,.3);border-color:rgba(var(--cor-primaria-rgb),.5)}.feature-card .icon{margin-bottom:20px}.feature-card .icon svg{width:60px;height:60px;stroke-width:1.5;color:var(--cor-terciaria)}.feature-card h3{font-size:1.6rem;margin-bottom:10px;font-weight:700}.feature-card p{color:var(--texto-escuro)}#how-it-works{background-color:rgba(0,0,0,.4)}.steps-container{display:flex;justify-content:center;flex-wrap:wrap;gap:50px;text-align:center}.step{max-width:280px}.step .step-number{display:flex;align-items:center;justify-content:center;width:60px;height:60px;margin:0 auto 20px;border-radius:50%;background:linear-gradient(45deg,var(--cor-primaria),var(--cor-secundaria));font-size:2rem;font-weight:800;color:#fff;box-shadow:0 0 15px rgba(var(--cor-primaria-rgb),.5)}.step h3{font-size:1.4rem;margin-bottom:10px;font-weight:700}.step p{color:var(--texto-escuro)}.plans-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:30px;align-items:center}.plan-card{background:var(--bg-card);border:1px solid var(--borda-card);border-radius:15px;padding:40px;text-align:center;backdrop-filter:blur(8px);transition:all .3s ease;position:relative;overflow:hidden}.plan-card.highlight{border-color:var(--cor-primaria);box-shadow:0 0 25px rgba(var(--cor-primaria-rgb),.5);transform:scale(1.05);background:rgba(40,4,48,.7)}.plan-badge{position:absolute;top:15px;right:15px;background-color:var(--cor-primaria);color:#fff;padding:5px 15px;border-radius:20px;font-size:.85rem;font-weight:700;text-transform:uppercase}.plan-card h3{font-family:var(--font-titulo);font-size:2.2rem;margin-bottom:10px}.plan-price{font-size:3rem;font-weight:800;margin:15px 0}.plan-price span{font-size:1rem;color:var(--texto-escuro);font-weight:400}.plan-features{list-style:none;margin:25px 0;text-align:left;color:var(--texto-escuro)}.plan-features li{display:flex;align-items:center;gap:10px;margin-bottom:12px}.plan-features li svg{color:var(--cor-terciaria);flex-shrink:0}.plan-card .cta-button{width:100%;margin-top:20px}.faq-container{max-width:800px;margin:0 auto}.faq-item{background:var(--bg-card);border:1px solid var(--borda-card);border-radius:10px;margin-bottom:15px;overflow:hidden;backdrop-filter:blur(5px)}.faq-question{padding:20px 25px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;font-size:1.15rem;font-weight:700;color:var(--texto-claro)}.faq-question .arrow{transition:transform .3s ease;color:var(--cor-terciaria)}.faq-answer{max-height:0;overflow:hidden;transition:max-height .4s ease-out,padding .4s ease-out;color:var(--texto-escuro);padding:0 25px;line-height:1.7}.faq-item.active .faq-answer{max-height:200px;padding-bottom:25px}.faq-item.active .arrow{transform:rotate(180deg)}footer{padding:50px 0;text-align:center;border-top:1px solid var(--borda-card);margin-top:80px}footer .logo{max-width:100px;margin-bottom:20px;opacity:.8}footer p{color:var(--texto-escuro);font-size:.9rem}</style></head><body><header class="hero"><div class="hero-content reveal"><h1 data-editable="hero-title">{{HERO_TITLE}}</h1><p data-editable="hero-subtitle">{{HERO_SUBTITLE}}</p><a href="https://wa.me/{{WHATSAPP_NUMBER}}?text=Olá!%20Quero%20testar%20o%20Mundo%20TV." class="cta-button" target="_blank" data-editable="hero-cta" data-whatsapp-link="true">{{HERO_CTA}}</a></div></header><main><section id="features"><div class="container"><div class="section-header reveal"><h2 data-editable="features-title">{{FEATURES_TITLE}}</h2><p data-editable="features-subtitle">{{FEATURES_SUBTITLE}}</p></div><div class="features-grid"><div class="feature-card reveal" style="transition-delay:0.1s"><div class="icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="2" y="7" width="20" height="15" rx="2" ry="2"></rect><polyline points="17 2 12 7 7 2"></polyline></svg></div><h3 data-editable="feature1-title">{{FEATURE1_TITLE}}</h3><p data-editable="feature1-desc">{{FEATURE1_DESC}}</p></div><div class="feature-card reveal" style="transition-delay:0.2s"><div class="icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="2" y="2" width="20" height="20" rx="2.18" ry="2.18"></rect><line x1="7" y1="2" x2="7" y2="22"></line><line x1="17" y1="2" x2="17" y2="22"></line><line x1="2" y1="12" x2="22" y2="12"></line></svg></div><h3 data-editable="feature2-title">{{FEATURE2_TITLE}}</h3><p data-editable="feature2-desc">{{FEATURE2_DESC}}</p></div><div class="feature-card reveal" style="transition-delay:0.3s"><div class="icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M18 8V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v7a2 2 0 0 0 2 2h8"></path><rect x="12" y="12" width="10" height="8" rx="2"></rect></svg></div><h3 data-editable="feature3-title">{{FEATURE3_TITLE}}</h3><p data-editable="feature3-desc">{{FEATURE3_DESC}}</p></div></div></div></section><section id="how-it-works"><div class="container"><div class="section-header reveal"><h2 data-editable="steps-title">{{STEPS_TITLE}}</h2><p data-editable="steps-subtitle">{{STEPS_SUBTITLE}}</p></div><div class="steps-container"><div class="step reveal" style="transition-delay:0.1s"><div class="step-number">1</div><h3 data-editable="step1-title">{{STEP1_TITLE}}</h3><p data-editable="step1-desc">{{STEP1_DESC}}</p></div><div class="step reveal" style="transition-delay:0.2s"><div class="step-number">2</div><h3 data-editable="step2-title">{{STEP2_TITLE}}</h3><p data-editable="step2-desc">{{STEP2_DESC}}</p></div><div class="step reveal" style="transition-delay:0.3s"><div class="step-number">3</div><h3 data-editable="step3-title">{{STEP3_TITLE}}</h3><p data-editable="step3-desc">{{STEP3_DESC}}</p></div></div></div></section><section id="plans"><div class="container"><div class="section-header reveal"><h2 data-editable="plans-title">{{PLANS_TITLE}}</h2><p data-editable="plans-subtitle">{{PLANS_SUBTITLE}}</p></div><div class="plans-grid"><div class="plan-card reveal" style="transition-delay:0.1s"><h3 data-editable="plan1-name">{{PLAN1_NAME}}</h3><div class="plan-price" data-editable="plan1-price">{{PLAN1_PRICE}}<span>,99/mês</span></div><ul class="plan-features"><li><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg><span data-editable="plan1-feat1">{{PLAN1_FEAT1}}</span></li><li><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg><span data-editable="plan1-feat2">{{PLAN1_FEAT2}}</span></li><li><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg><span data-editable="plan1-feat3">{{PLAN1_FEAT3}}</span></li></ul><a href="https://wa.me/{{WHATSAPP_NUMBER}}?text=Olá!%20Quero%20assinar%20o%20Plano%20Básico%20do%20Mundo%20TV." class="cta-button" target="_blank" data-whatsapp-link="true" data-editable="plan1-cta">{{PLAN1_CTA}}</a></div><div class="plan-card highlight reveal" style="transition-delay:0.2s"><span class="plan-badge" data-editable="plan2-badge">{{PLAN2_BADGE}}</span><h3 data-editable="plan2-name">{{PLAN2_NAME}}</h3><div class="plan-price" data-editable="plan2-price">{{PLAN2_PRICE}}<span>,99/mês</span></div><ul class="plan-features"><li><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg><span data-editable="plan2-feat1">{{PLAN2_FEAT1}}</span></li><li><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg><span data-editable="plan2-feat2">{{PLAN2_FEAT2}}</span></li><li><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg><span data-editable="plan2-feat3">{{PLAN2_FEAT3}}</span></li></ul><a href="https://wa.me/{{WHATSAPP_NUMBER}}?text=Olá!%20Quero%20assinar%20o%20Plano%20Padrão%20do%20Mundo%20TV." class="cta-button" target="_blank" data-whatsapp-link="true" data-editable="plan2-cta">{{PLAN2_CTA}}</a></div><div class="plan-card reveal" style="transition-delay:0.3s"><h3 data-editable="plan3-name">{{PLAN3_NAME}}</h3><div class="plan-price" data-editable="plan3-price">{{PLAN3_PRICE}}<span>,99/mês</span></div><ul class="plan-features"><li><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg><span data-editable="plan3-feat1">{{PLAN3_FEAT1}}</span></li><li><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg><span data-editable="plan3-feat2">{{PLAN3_FEAT2}}</span></li><li><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg><span data-editable="plan3-feat3">{{PLAN3_FEAT3}}</span></li></ul><a href="https://wa.me/{{WHATSAPP_NUMBER}}?text=Olá!%20Quero%20assinar%20o%20Plano%20Premium%20do%20Mundo%20TV." class="cta-button" target="_blank" data-whatsapp-link="true" data-editable="plan3-cta">{{PLAN3_CTA}}</a></div></div></div></section><section id="faq"><div class="container"><div class="section-header reveal"><h2 data-editable="faq-title">Ainda tem Dúvidas? <span>Relaxa.</span></h2><p data-editable="faq-subtitle">Respostas rápidas para as perguntas mais comuns.</p></div><div class="faq-container reveal"><div class="faq-item"><div class="faq-question" data-editable="faq1-q">{{FAQ1_Q}}<span class="arrow"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></span></div><div class="faq-answer"><p data-editable="faq1-a">{{FAQ1_A}}</p></div></div><div class="faq-item"><div class="faq-question" data-editable="faq2-q">{{FAQ2_Q}}<span class="arrow"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></span></div><div class="faq-answer"><p data-editable="faq2-a">{{FAQ2_A}}</p></div></div><div class="faq-item"><div class="faq-question" data-editable="faq3-q">{{FAQ3_Q}}<span class="arrow"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></span></div><div class="faq-answer"><p data-editable="faq3-a">{{FAQ3_A}}</p></div></div></div></div></section></main><footer><div class="container reveal"><img src="{{LOGO_URL}}" alt="Mundo TV Logo" class="logo" data-editable="logo-img"><p data-editable="footer-text">{{FOOTER_TEXT}}</p></div></footer><script>const observer=new IntersectionObserver(e=>{e.forEach(e=>{e.isIntersecting&&e.target.classList.add("visible")})},{threshold:.1});document.querySelectorAll(".reveal").forEach(e=>observer.observe(e));document.querySelectorAll(".faq-question").forEach(e=>{e.addEventListener("click",()=>{e.parentElement.classList.toggle("active")})});const r=parseInt(getComputedStyle(document.documentElement).getPropertyValue("--cor-primaria").substring(1,3),16),g=parseInt(getComputedStyle(document.documentElement).getPropertyValue("--cor-primaria").substring(3,5),16),b=parseInt(getComputedStyle(document.documentElement).getPropertyValue("--cor-primaria").substring(5,7),16);document.documentElement.style.setProperty("--cor-primaria-rgb",\`\${r}, \${g}, \${b}\`)<\/script></body></html>`;
+        const landingPageTemplate = `<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Mundo TV | O Universo do Entretenimento, Unificado</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;900&family=Inter:wght@400;500;700;800&display=swap" rel="stylesheet"><style>:root{--cor-primaria:{{COLOR_PRIMARY}};--cor-secundaria:#9C27B0;--cor-terciaria:#00BCD4;--bg-principal:#121212;--bg-card:rgba(30,30,30,0.7);--borda-card:rgba(255,255,255,0.08);--texto-claro:#F0F0F0;--texto-escuro:#A0A0A0;--font-titulo:'Montserrat',sans-serif;--font-body:'Inter',sans-serif}*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}html{scroll-behavior:smooth}body{font-family:var(--font-body);background-color:var(--bg-principal);color:var(--texto-claro);line-height:1.6;overflow-x:hidden;background-image:radial-gradient(circle at top left,var(--cor-secundaria) 0%,transparent 25%),radial-gradient(circle at bottom right,var(--cor-primaria) 0%,transparent 25%);background-size:150% 150%;animation:gradient-anim 15s ease infinite;position:relative}@keyframes gradient-anim{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}.container{max-width:1200px;margin:0 auto;padding:0 20px}.hero{min-height:90vh;display:flex;align-items:center;justify-content:center;text-align:center;position:relative;z-index:1}.hero-content{max-width:800px;padding:20px}.hero-content h1{font-family:var(--font-titulo);font-weight:900;font-size:clamp(3rem,9vw,5.5rem);line-height:1.1;margin-bottom:20px;background:linear-gradient(45deg,var(--cor-primaria),var(--cor-secundaria));-webkit-background-clip:text;-webkit-text-fill-color:transparent}.cta-button{display:inline-flex;align-items:center;gap:10px;background:linear-gradient(45deg,var(--cor-primaria),var(--cor-secundaria));color:#fff;padding:16px 32px;text-decoration:none;font-size:1.1rem;font-weight:700;border-radius:50px;box-shadow:0 5px 20px rgba(var(--cor-primaria-rgb),.4);transition:all .3s ease;position:relative;overflow:hidden;border:none;cursor:pointer}.cta-button:hover{transform:translateY(-5px);box-shadow:0 8px 25px rgba(var(--cor-primaria-rgb),.6)}</style></head><body><header class="hero"><div class="hero-content"><h1 data-editable="hero-title">{{HERO_TITLE}}</h1><a href="https://wa.me/{{WHATSAPP_NUMBER}}?text=Olá!%20Quero%20testar%20o%20Mundo%20TV." class="cta-button" target="_blank" data-whatsapp-link="true">QUERO TESTAR AGORA</a></div></header></body></html>`;
 
-        const iframe = document.getElementById('preview-frame');
-        const controls = document.querySelectorAll('#controls [data-target]');
-        const placeholders = new Map();
+        document.addEventListener('DOMContentLoaded', () => {
+            const loginForm = document.getElementById('login-form');
+            const loginContainer = document.getElementById('login-container');
+            const editorContainer = document.getElementById('editor-container');
+            const loginButton = document.getElementById('login-button');
+            const usernameInput = document.getElementById('username-input');
+            const passwordInput = document.getElementById('password-input');
+            const errorMessage = document.getElementById('error-message');
 
-        // Mapeia todos os placeholders e seus inputs
-        controls.forEach(input => {
-            const key = input.id.replace(/-/g, '_').toUpperCase();
-            placeholders.set(key, input.id);
-        });
+            const AUTH_PROXY_URL = '/.netlify/functions/auth'; 
 
-        function getPopulatedTemplate() {
-            let populatedHTML = landingPageTemplate;
-            placeholders.forEach((inputId, key) => {
-                const inputElement = document.getElementById(inputId);
-                let value = inputElement.value;
-                if(inputId === 'footer-text'){
-                    value = value.replace('{{YEAR}}', new Date().getFullYear());
+            loginForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const username = usernameInput.value.trim();
+                const password = passwordInput.value.trim();
+
+                if (!username || !password) {
+                    errorMessage.textContent = 'Preencha usuário e senha.';
+                    return;
                 }
-                const regex = new RegExp(`{{${key}}}`, 'g');
-                populatedHTML = populatedHTML.replace(regex, value);
-            });
-            return populatedHTML;
-        }
 
-        function updatePreview() {
-            const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
-            if (!iframeDoc) return;
+                loginButton.disabled = true;
+                loginButton.textContent = 'Verificando...';
+                errorMessage.textContent = '';
 
-            controls.forEach(input => {
-                const targetId = input.dataset.target;
-                const value = input.value;
-
-                if (targetId === 'color') {
-                    iframeDoc.documentElement.style.setProperty(input.dataset.variable, value);
-                    const r = parseInt(value.substring(1, 3), 16);
-                    const g = parseInt(value.substring(3, 5), 16);
-                    const b = parseInt(value.substring(5, 7), 16);
-                    iframeDoc.documentElement.style.setProperty('--cor-primaria-rgb', `${r}, ${g}, ${b}`);
-                } else if (targetId === 'whatsapp-links') {
-                    iframeDoc.querySelectorAll('[data-whatsapp-link="true"]').forEach(link => {
-                        const text = new URL(link.href).searchParams.get('text');
-                        link.href = `https://wa.me/${value}?text=${encodeURIComponent(text)}`;
+                try {
+                    const response = await fetch(AUTH_PROXY_URL, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ username, password })
                     });
-                } else if (targetId === 'logo-img') {
-                    const logo = iframeDoc.querySelector('[data-editable="logo-img"]');
-                    if (logo) logo.src = value;
-                } else {
-                    iframeDoc.querySelectorAll(`[data-editable="${targetId}"]`).forEach(el => {
-                        if (targetId.includes('price')) {
-                            el.innerHTML = `${value}<span>,99/mês</span>`;
+                    const result = await response.json();
+                    if (response.ok) {
+                        loginContainer.style.display = 'none';
+                        editorContainer.style.display = 'flex';
+                        initEditor(); 
+                    } else {
+                        errorMessage.textContent = result.message || 'Usuário ou senha inválidos.';
+                    }
+                } catch (error) {
+                    errorMessage.textContent = 'Erro ao conectar. Tente mais tarde.';
+                } finally {
+                    loginButton.disabled = false;
+                    loginButton.textContent = 'Entrar';
+                }
+            });
+            
+            function initEditor() {
+                const iframe = document.getElementById('preview-frame');
+                const controls = document.querySelectorAll('#controls [data-target]');
+                const placeholders = new Map();
+                controls.forEach(input => {
+                    const key = input.id.replace(/-/g, '_').toUpperCase();
+                    placeholders.set(key, input.id);
+                });
+
+                function getPopulatedTemplate() {
+                    let populatedHTML = landingPageTemplate;
+                    placeholders.forEach((inputId, key) => {
+                        const inputElement = document.getElementById(inputId);
+                        let value = inputElement.value;
+                        if(inputId === 'footer-text'){
+                            value = value.replace('{{YEAR}}', new Date().getFullYear());
+                        }
+                        const regex = new RegExp(`{{${key}}}`, 'g');
+                        populatedHTML = populatedHTML.replace(regex, value);
+                    });
+                    return populatedHTML;
+                }
+
+                function updatePreview() {
+                    const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+                    if (!iframeDoc) return;
+                    controls.forEach(input => {
+                        const targetId = input.dataset.target;
+                        const value = input.value;
+                        if (targetId === 'color') {
+                            iframeDoc.documentElement.style.setProperty(input.dataset.variable, value);
+                            const r = parseInt(value.substring(1, 3), 16), g = parseInt(value.substring(3, 5), 16), b = parseInt(value.substring(5, 7), 16);
+                            iframeDoc.documentElement.style.setProperty('--cor-primaria-rgb', `${r}, ${g}, ${b}`);
+                        } else if (targetId === 'whatsapp-links') {
+                            iframeDoc.querySelectorAll('[data-whatsapp-link="true"]').forEach(link => {
+                                const text = new URL(link.href).searchParams.get('text');
+                                link.href = `https://wa.me/${value}?text=${encodeURIComponent(text)}`;
+                            });
+                        } else if (targetId === 'logo-img') {
+                            const logo = iframeDoc.querySelector('[data-editable="logo-img"]');
+                            if (logo) logo.src = value;
                         } else {
-                            el.innerHTML = value; // Use innerHTML para permitir tags como <span> e <b>
+                            iframeDoc.querySelectorAll(`[data-editable="${targetId}"]`).forEach(el => {
+                                el.innerHTML = value;
+                            });
                         }
                     });
                 }
-            });
-        }
 
-        iframe.addEventListener('load', () => {
-             const initialHTML = getPopulatedTemplate();
-             iframe.contentWindow.document.open();
-             iframe.contentWindow.document.write(initialHTML);
-             iframe.contentWindow.document.close();
-             updatePreview();
+                iframe.addEventListener('load', () => {
+                     const initialHTML = getPopulatedTemplate();
+                     iframe.contentWindow.document.open();
+                     iframe.contentWindow.document.write(initialHTML);
+                     iframe.contentWindow.document.close();
+                     updatePreview();
+                });
+
+                controls.forEach(input => {
+                    input.addEventListener('input', updatePreview);
+                    input.addEventListener('change', updatePreview);
+                });
+
+                document.getElementById('export-button').addEventListener('click', () => {
+                    const finalHtml = getPopulatedTemplate();
+                    const blob = new Blob([finalHtml], { type: 'text/html' });
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = 'index.html';
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    URL.revokeObjectURL(url);
+                });
+                iframe.src = 'about:blank';
+            }
         });
-
-        controls.forEach(input => {
-            input.addEventListener('input', updatePreview);
-            input.addEventListener('change', updatePreview);
-        });
-
-        document.getElementById('export-button').addEventListener('click', () => {
-            const finalHtml = getPopulatedTemplate();
-            const blob = new Blob([finalHtml], { type: 'text/html' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = 'index.html';
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            URL.revokeObjectURL(url);
-        });
-
-        iframe.src = 'about:blank';
     </script>
 </body>
 </html>
