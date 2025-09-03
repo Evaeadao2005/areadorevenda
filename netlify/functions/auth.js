@@ -1,44 +1,38 @@
-// Arquivo: netlify/functions/auth.js (versão com logs aprimorados)
+// Arquivo: netlify/functions/auth.js (Versão Final de Diagnóstico)
 
-// A URL de login real do seu painel.
 const PANEL_LOGIN_URL = 'https://daltvplus.sigmab.pro/api/v1/user/login';
 
 exports.handler = async function(event) {
+    console.log("--- INÍCIO DA EXECUÇÃO DA FUNÇÃO AUTH ---");
+    console.log("Método da requisição:", event.httpMethod);
+
     const headers = {
         'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Headers': 'Content-Type',
+        'Access-control-allow-headers': 'Content-Type',
         'Content-Type': 'application/json'
     };
     
     if (event.httpMethod === 'OPTIONS') {
+        console.log("Respondendo à requisição OPTIONS (preflight).");
         return { statusCode: 204, headers };
     }
 
     if (event.httpMethod !== 'POST') {
-        return {
-            statusCode: 405,
-            headers,
-            body: JSON.stringify({ message: 'Método não permitido.' })
-        };
+        console.warn("Método não permitido:", event.httpMethod);
+        return { statusCode: 405, headers, body: JSON.stringify({ message: 'Método não permitido.' }) };
     }
 
-    // LOG 1: Registra o início da execução
-    console.log("Recebida requisição de login.");
-
     try {
+        console.log("Analisando o corpo da requisição...");
         const { username, password } = JSON.parse(event.body);
+        console.log(`Dados recebidos: usuário = ${username}`);
 
         if (!username || !password) {
-            return {
-                statusCode: 400,
-                headers,
-                body: JSON.stringify({ message: 'Usuário e senha são obrigatórios.' })
-            };
+            console.error("Erro: Usuário ou senha não fornecidos no corpo da requisição.");
+            return { statusCode: 400, headers, body: JSON.stringify({ message: 'Usuário e senha são obrigatórios.' }) };
         }
 
-        // LOG 2: Registra os dados que serão enviados (sem a senha, por segurança)
-        console.log(`Tentando autenticar usuário: ${username}`);
-
+        console.log(`Enviando requisição de login para: ${PANEL_LOGIN_URL}`);
         const response = await fetch(PANEL_LOGIN_URL, {
             method: 'POST',
             headers: {
@@ -46,46 +40,31 @@ exports.handler = async function(event) {
                 'Accept': 'application/json',
                 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.110 Safari/537.36'
             },
-            body: JSON.stringify({
-                username: username,
-                password: password
-            })
+            body: JSON.stringify({ username, password })
         });
 
-        // LOG 3: Registra o status da resposta do seu painel
         console.log(`Painel respondeu com status: ${response.status}`);
         
         const responseText = await response.text();
-        let data;
+        console.log("Texto da resposta do painel:", responseText);
 
-        try {
-            data = JSON.parse(responseText);
-        } catch (jsonError) {
-            // LOG 4: Se a resposta não for JSON, este log é crucial!
-            console.error("ERRO: A resposta do painel não é um JSON válido. Resposta recebida:", responseText);
-            // Lança um erro para ser pego pelo catch principal.
-            throw new Error("O painel retornou uma resposta em formato inesperado (não-JSON).");
-        }
+        const data = JSON.parse(responseText);
         
         if (response.ok) {
-            console.log("Autenticação bem-sucedida para o usuário:", username);
-            return {
-                statusCode: 200,
-                headers,
-                body: JSON.stringify({ success: true, token: data.token })
-            };
+            console.log("Autenticação bem-sucedida.");
+            return { statusCode: 200, headers, body: JSON.stringify({ success: true }) };
         } else {
-            console.warn(`Falha na autenticação para usuário ${username}. Mensagem do painel: ${data.message}`);
-            return {
-                statusCode: response.status,
-                headers,
-                body: JSON.stringify({ message: data.message || 'Credenciais inválidas.' })
-            };
+            console.warn("Falha na autenticação. Mensagem do painel:", data.message);
+            return { statusCode: response.status, headers, body: JSON.stringify({ message: data.message || 'Credenciais inválidas.' }) };
         }
 
     } catch (error) {
-        // LOG 5: O log mais importante. Captura o erro completo.
-        console.error("ERRO CRÍTICO NA FUNÇÃO DE AUTENTICAÇÃO:", error);
+        console.error("--- ERRO CRÍTICO CAPTURADO ---");
+        console.error("Tipo de Erro:", error.name);
+        console.error("Mensagem de Erro:", error.message);
+        console.error("Stack Trace:", error.stack);
+        console.error("--- FIM DO ERRO CRÍTICO ---");
+
         return {
             statusCode: 500,
             headers,
